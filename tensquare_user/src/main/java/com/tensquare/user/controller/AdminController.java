@@ -17,6 +17,8 @@ import com.tensquare.user.service.AdminService;
 import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
+import sun.misc.Request;
+
 /**
  * 控制器层
  * @author Administrator
@@ -30,7 +32,17 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 	
-	
+	@RequestMapping(value = "/login" , method = RequestMethod.POST)
+	public Result login(@RequestBody Admin admin){
+		Admin adminLogin = adminService.login(admin);
+		if(adminLogin == null){
+			return new Result(false , StatusCode.LOGINERROR ,  "登录失败");
+		}
+		//使得前后端可以通话的操作。采用JWT来实现
+		return new Result(true , StatusCode.OK , "登录成功");
+	}
+
+
 	/**
 	 * 查询全部数据
 	 * @return
