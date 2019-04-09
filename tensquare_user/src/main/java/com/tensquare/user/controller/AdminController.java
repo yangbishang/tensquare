@@ -1,4 +1,5 @@
 package com.tensquare.user.controller;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
 import sun.misc.Request;
+import util.JwtUtil;
 
 /**
  * 控制器层
@@ -31,6 +33,9 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
+
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	@RequestMapping(value = "/login" , method = RequestMethod.POST)
 	public Result login(@RequestBody Admin admin){
@@ -39,7 +44,12 @@ public class AdminController {
 			return new Result(false , StatusCode.LOGINERROR ,  "登录失败");
 		}
 		//使得前后端可以通话的操作。采用JWT来实现
-		return new Result(true , StatusCode.OK , "登录成功");
+		//生成令牌
+		String token = jwtUtil.createJWT(adminLogin.getId() , adminLogin.getLoginname() , "admin");//按理说这里的角色是应该要查出来，为了方便这里就直接写了
+		Map<String , Object> map = new HashMap<>();
+		map.put("token" , token);
+		map.put("role" ,"admin");
+		return new Result(true , StatusCode.OK , "登录成功", map);
 	}
 
 
@@ -108,7 +118,7 @@ public class AdminController {
 	}
 	
 	/**
-	 * 删除
+	 * 删除  必须由admin角色才能删除
 	 * @param id
 	 */
 	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
