@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sun.tracing.dtrace.ProviderAttributes;
+import com.tensquare.qa.client.BaseClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,7 +31,16 @@ public class ProblemController {
 
 	@Autowired
 	private ProblemService problemService;
-	
+
+	@Autowired
+	private BaseClient baseClient;
+
+	@RequestMapping(value = "/label/{labelId}" , method = RequestMethod.GET)
+	public Result findByLabelId(@PathVariable String labelId){
+
+			Result result = baseClient.findById(labelId);
+			return result;
+	}
 
 	@RequestMapping(value = "/newlist/{labelid}/{page}/{size}" , method = RequestMethod.GET)
 	public Result newlist(@PathVariable String labelid , @PathVariable int page , @PathVariable int size){
